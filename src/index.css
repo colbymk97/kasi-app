@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  background: #000;
+  height: 100%;
+  width: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+body {
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#root {
+  display: flex;
+  min-height: 100dvh;
+  min-height: 100vh;
+}
+
+@keyframes kasi-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.kasi-pulse {
+  animation: kasi-pulse 8s ease-in-out infinite;
+}
+
+input[type='range'].kasi-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  width: 100%;
+  height: 28px;
+}
+input[type='range'].kasi-slider::-webkit-slider-runnable-track {
+  height: 2px;
+  background: #444;
+}
+input[type='range'].kasi-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  margin-top: -8px;
+}
+input[type='range'].kasi-slider::-moz-range-track {
+  height: 2px;
+  background: #444;
+}
+input[type='range'].kasi-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+}
+
+input[type='color'].kasi-color {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 9999px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  cursor: pointer;
+}
+input[type='color'].kasi-color::-webkit-color-swatch-wrapper { padding: 2px; }
+input[type='color'].kasi-color::-webkit-color-swatch { border: none; border-radius: 9999px; }
+input[type='color'].kasi-color::-moz-color-swatch { border: none; border-radius: 9999px; }
