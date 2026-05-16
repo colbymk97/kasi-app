@@ -4,6 +4,7 @@ import Controls from './components/Controls.jsx';
 import TimerOverlay from './components/TimerOverlay.jsx';
 import History from './components/History.jsx';
 import { useWakeLock } from './hooks/useWakeLock.js';
+import { useFullscreen } from './hooks/useFullscreen.js';
 import { addSession } from './lib/db.js';
 import { DEFAULT_COLOR } from './lib/colors.js';
 
@@ -52,6 +53,7 @@ export default function App() {
   }, [color, brightness, pulse, shape, orbSize, timerMinutes]);
 
   useWakeLock(!!session);
+  const fullscreen = useFullscreen();
 
   const minOrbSize = 40;
   const [maxOrbSize, setMaxOrbSize] = useState(() => {
@@ -77,6 +79,9 @@ export default function App() {
   }, [session]);
 
   const startTimer = useCallback(() => {
+    if (fullscreen.isSupported && !fullscreen.isFullscreen && !fullscreen.isStandalone) {
+      fullscreen.request();
+    }
     const startedAt = Date.now();
     const durationMs = timerMinutes * 60 * 1000;
     setSession({
@@ -86,7 +91,7 @@ export default function App() {
       shape,
     });
     setControlsVisible(false);
-  }, [timerMinutes, color, shape]);
+  }, [timerMinutes, color, shape, fullscreen]);
 
   const finishSession = useCallback(
     async (completed) => {
@@ -165,6 +170,7 @@ export default function App() {
           setTimerMinutes={setTimerMinutes}
           onStartTimer={startTimer}
           onOpenHistory={() => setView('history')}
+          fullscreen={fullscreen}
         />
       )}
 

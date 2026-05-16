@@ -35,6 +35,11 @@ body {
   min-height: 100vh;
 }
 
+:fullscreen,
+:-webkit-full-screen {
+  background: #000;
+}
+
 @keyframes kasi-pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.04); }

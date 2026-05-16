@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useAutoDismiss } from '../hooks/useAutoDismiss.js';
 import { KASINA_PRESETS } from '../lib/colors.js';
 
 const AUTO_DISMISS_MS = 5000;
+const IOS_HINT_KEY = 'kasi:hint:ios-install:dismissed';
 
 export default function Controls({
   visible,
@@ -18,12 +20,38 @@ export default function Controls({
   setTimerMinutes,
   onStartTimer,
   onOpenHistory,
+  fullscreen,
 }) {
   useAutoDismiss(visible, AUTO_DISMISS_MS, onDismiss);
+  const [iosHintDismissed, setIosHintDismissed] = useState(() => {
+    try {
+      return localStorage.getItem(IOS_HINT_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
 
   if (!visible) return null;
 
   const stop = (e) => e.stopPropagation();
+
+  const dismissIosHint = () => {
+    try {
+      localStorage.setItem(IOS_HINT_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+    setIosHintDismissed(true);
+  };
+
+  const showFullscreenButton =
+    fullscreen && fullscreen.isSupported && !fullscreen.isStandalone;
+  const showIosHint =
+    fullscreen &&
+    !fullscreen.isStandalone &&
+    !fullscreen.isSupported &&
+    fullscreen.isIOS &&
+    !iosHintDismissed;
 
   return (
     <div
@@ -111,6 +139,51 @@ export default function Controls({
               Pulse
             </label>
           </div>
+
+          {showFullscreenButton && (
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-xs uppercase tracking-widest text-white/50">View</span>
+              <button
+                type="button"
+                onClick={() => fullscreen.toggle()}
+                className="text-xs uppercase tracking-widest px-3 py-2 border border-white/15 rounded text-white/80"
+                aria-pressed={fullscreen.isFullscreen}
+              >
+                {fullscreen.isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+              </button>
+            </div>
+          )}
+
+          {showIosHint && (
+            <div className="flex items-start gap-3 text-xs text-white/55 border border-white/10 rounded p-3">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                aria-hidden
+                className="mt-0.5 shrink-0 fill-none stroke-white/55"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 3v12" />
+                <path d="M8 7l4-4 4 4" />
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+              </svg>
+              <span className="flex-1 leading-snug">
+                For full-screen on iPhone, tap Share then{' '}
+                <span className="text-white/80">Add to Home Screen</span>.
+              </span>
+              <button
+                type="button"
+                onClick={dismissIosHint}
+                className="text-white/40 hover:text-white/80 uppercase tracking-widest"
+                aria-label="Dismiss hint"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
 
           <div className="flex items-center gap-3 pt-2 border-t border-white/10">
             <input
