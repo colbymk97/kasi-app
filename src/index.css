@@ -49,20 +49,6 @@ body {
   animation: kasi-pulse 6s ease-in-out infinite;
 }
 
-@keyframes kasi-flicker {
-  0%   { transform: scaleY(1)    scaleX(1)    translateY(0); }
-  20%  { transform: scaleY(1.05) scaleX(0.97) translateY(-1%); }
-  40%  { transform: scaleY(0.97) scaleX(1.02) translateY(0.5%); }
-  60%  { transform: scaleY(1.03) scaleX(0.99) translateY(-0.5%); }
-  80%  { transform: scaleY(0.98) scaleX(1.01) translateY(0.5%); }
-  100% { transform: scaleY(1)    scaleX(1)    translateY(0); }
-}
-
-.kasi-flame-flicker {
-  animation: kasi-flicker 1.8s ease-in-out infinite;
-  transform-origin: 50% 92%;
-}
-
 input[type='range'].kasi-slider {
   -webkit-appearance: none;
   appearance: none;
