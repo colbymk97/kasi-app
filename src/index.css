@@ -41,12 +41,12 @@ body {
 }
 
 @keyframes kasi-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
+  0%, 100% { transform: scale(0.92); }
+  50% { transform: scale(1.08); }
 }
 
 .kasi-pulse {
-  animation: kasi-pulse 8s ease-in-out infinite;
+  animation: kasi-pulse 6s ease-in-out infinite;
 }
 
 @keyframes kasi-flicker {
