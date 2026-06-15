@@ -1,9 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAutoDismiss } from '../hooks/useAutoDismiss.js';
 import { KASINA_PRESETS } from '../lib/colors.js';
 
 const AUTO_DISMISS_MS = 5000;
 const IOS_HINT_KEY = 'kasi:hint:ios-install:dismissed';
+
+const MIN_MINUTES = 1;
+const MAX_MINUTES = 180;
+
+const SHAPE_OPTIONS = [
+  { id: 'circle', label: 'Circle' },
+  { id: 'square', label: 'Square' },
+  { id: 'flame', label: 'Flame' },
+];
 
 export default function Controls({
   visible,
@@ -23,6 +32,10 @@ export default function Controls({
   fullscreen,
 }) {
   useAutoDismiss(visible, AUTO_DISMISS_MS, onDismiss);
+  const [minutesText, setMinutesText] = useState(String(timerMinutes));
+  useEffect(() => {
+    setMinutesText(String(timerMinutes));
+  }, [timerMinutes]);
   const [iosHintDismissed, setIosHintDismissed] = useState(() => {
     try {
       return localStorage.getItem(IOS_HINT_KEY) === '1';
@@ -121,14 +134,23 @@ export default function Controls({
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <button
-              type="button"
-              onClick={() => setShape(shape === 'circle' ? 'square' : 'circle')}
-              className="text-xs uppercase tracking-widest px-3 py-2 border border-white/15 rounded text-white/80"
-              aria-pressed={shape === 'square'}
-            >
-              {shape === 'circle' ? 'Circle' : 'Square'}
-            </button>
+            <div className="flex items-center gap-2">
+              {SHAPE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setShape(opt.id)}
+                  className="text-xs uppercase tracking-widest px-3 py-2 border rounded"
+                  style={{
+                    borderColor: shape === opt.id ? '#fff' : 'rgba(255,255,255,0.15)',
+                    color: shape === opt.id ? '#fff' : 'rgba(255,255,255,0.6)',
+                  }}
+                  aria-pressed={shape === opt.id}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
             <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-white/60">
               <input
                 type="checkbox"
@@ -188,10 +210,26 @@ export default function Controls({
           <div className="flex items-center gap-3 pt-2 border-t border-white/10">
             <input
               type="number"
-              min="1"
-              max="180"
-              value={timerMinutes}
-              onChange={(e) => setTimerMinutes(Math.max(1, Math.min(180, parseInt(e.target.value || '1', 10))))}
+              inputMode="numeric"
+              min={MIN_MINUTES}
+              max={MAX_MINUTES}
+              value={minutesText}
+              onChange={(e) => {
+                const next = e.target.value;
+                setMinutesText(next);
+                const parsed = parseInt(next, 10);
+                if (!Number.isNaN(parsed)) {
+                  setTimerMinutes(Math.max(MIN_MINUTES, Math.min(MAX_MINUTES, parsed)));
+                }
+              }}
+              onBlur={() => {
+                const parsed = parseInt(minutesText, 10);
+                const clamped = Number.isNaN(parsed)
+                  ? MIN_MINUTES
+                  : Math.max(MIN_MINUTES, Math.min(MAX_MINUTES, parsed));
+                setTimerMinutes(clamped);
+                setMinutesText(String(clamped));
+              }}
               className="bg-transparent border border-white/15 rounded px-3 py-2 w-20 text-white text-center"
               aria-label="Timer minutes"
             />
