@@ -51,14 +51,16 @@ function Flame({ size, brightness, pulse }) {
   useEffect(() => {
     if (prefersReducedMotion()) return undefined;
 
-    // Slow body motion, plus fast small flicker layered on top (octaves).
-    const sway = makeChannel({ min: -5, max: 5, minDur: 0.6, maxDur: 1.8, spike: { chance: 0.12, min: -11, max: 11 } });
-    const swayJitter = makeChannel({ min: -2.2, max: 2.2, minDur: 0.08, maxDur: 0.22 });
-    const tipSway = makeChannel({ min: -7, max: 7, minDur: 0.25, maxDur: 0.7, spike: { chance: 0.1, min: -14, max: 14 } });
-    const bodyHeight = makeChannel({ min: 0.9, max: 1.14, minDur: 0.4, maxDur: 1.1, spike: { chance: 0.08, min: 0.76, max: 0.84 } });
-    const flickHeight = makeChannel({ min: -0.05, max: 0.05, minDur: 0.05, maxDur: 0.15 });
-    const bodyWidth = makeChannel({ min: 0.95, max: 1.06, minDur: 0.5, maxDur: 1.3 });
-    const bright = makeChannel({ min: 0.82, max: 1.0, minDur: 0.05, maxDur: 0.18, spike: { chance: 0.06, min: 0.48, max: 0.64 } });
+    // Slow body motion, plus a faint flicker layered on top (octaves).
+    // Tuned to be steady and mellow: small amplitudes, slow transitions,
+    // and rare, gentle gusts/gutters.
+    const sway = makeChannel({ min: -2.2, max: 2.2, minDur: 1.6, maxDur: 3.4, spike: { chance: 0.05, min: -4.5, max: 4.5 } });
+    const swayJitter = makeChannel({ min: -0.7, max: 0.7, minDur: 0.25, maxDur: 0.55 });
+    const tipSway = makeChannel({ min: -2.8, max: 2.8, minDur: 0.8, maxDur: 1.8, spike: { chance: 0.04, min: -5.5, max: 5.5 } });
+    const bodyHeight = makeChannel({ min: 0.96, max: 1.05, minDur: 1.1, maxDur: 2.4, spike: { chance: 0.04, min: 0.9, max: 0.93 } });
+    const flickHeight = makeChannel({ min: -0.02, max: 0.02, minDur: 0.12, maxDur: 0.3 });
+    const bodyWidth = makeChannel({ min: 0.975, max: 1.025, minDur: 1.0, maxDur: 2.2 });
+    const bright = makeChannel({ min: 0.9, max: 1.0, minDur: 0.18, maxDur: 0.45, spike: { chance: 0.03, min: 0.74, max: 0.84 } });
 
     let raf;
     let last = performance.now();
