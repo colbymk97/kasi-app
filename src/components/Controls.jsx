@@ -12,6 +12,7 @@ const SHAPE_OPTIONS = [
   { id: 'circle', label: 'Circle' },
   { id: 'square', label: 'Square' },
   { id: 'flame', label: 'Flame' },
+  { id: 'ember', label: 'Ember' },
 ];
 
 export default function Controls({
@@ -133,8 +134,8 @@ export default function Controls({
             />
           </div>
 
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
               {SHAPE_OPTIONS.map((opt) => (
                 <button
                   key={opt.id}

@@ -73,7 +73,12 @@ export default function History({ onClose }) {
                   <span
                     className="inline-block w-4 h-4 rounded-full shrink-0"
                     style={
-                      s.shape === 'flame'
+                      s.shape === 'ember'
+                        ? {
+                            background: `radial-gradient(circle at 50% 50%, #fff 0%, ${s.color} 55%, rgba(0,0,0,0.85) 100%)`,
+                            borderRadius: '50%',
+                          }
+                        : s.shape === 'flame'
                         ? {
                             background:
                               'radial-gradient(circle at 50% 70%, #fff7d6 0%, #fbbf24 45%, #f97316 80%, #1e40af 100%)',
