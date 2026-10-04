@@ -38,19 +38,19 @@ export default function App() {
   const [color, setColor] = useState(stored?.color || DEFAULT_COLOR);
   const [brightness, setBrightness] = useState(stored?.brightness ?? 0.9);
   const [pulse, setPulse] = useState(stored?.pulse ?? false);
-  const [shape, setShape] = useState(stored?.shape || 'circle');
   const [orbSize, setOrbSize] = useState(stored?.orbSize || initialOrbSize());
   const [timerMinutes, setTimerMinutes] = useState(stored?.timerMinutes || 10);
 
   const [view, setView] = useState('meditate'); // 'meditate' | 'history'
   const [controlsVisible, setControlsVisible] = useState(false);
-  const [session, setSession] = useState(null); // { startedAt, endsAt, color, shape }
+  const [session, setSession] = useState(null); // { startedAt, endsAt, color }
+  const [endVisible, setEndVisible] = useState(false);
 
   const bellRef = useRef(null);
 
   useEffect(() => {
-    savePrefs({ color, brightness, pulse, shape, orbSize, timerMinutes });
-  }, [color, brightness, pulse, shape, orbSize, timerMinutes]);
+    savePrefs({ color, brightness, pulse, orbSize, timerMinutes });
+  }, [color, brightness, pulse, orbSize, timerMinutes]);
 
   useWakeLock(!!session);
   const fullscreen = useFullscreen();
@@ -74,7 +74,10 @@ export default function App() {
   }, []);
 
   const handleTapOrb = useCallback(() => {
-    if (session) return; // immersive when timer is running
+    if (session) {
+      setEndVisible((v) => !v);
+      return;
+    }
     setControlsVisible((v) => !v);
   }, [session]);
 
@@ -82,16 +85,31 @@ export default function App() {
     if (fullscreen.isSupported && !fullscreen.isFullscreen && !fullscreen.isStandalone) {
       fullscreen.request();
     }
+    // Unlock audio inside this tap so the end bell can play later (iOS).
+    const bell = bellRef.current;
+    if (bell) {
+      bell.muted = true;
+      bell
+        .play()
+        .then(() => {
+          bell.pause();
+          bell.currentTime = 0;
+          bell.muted = false;
+        })
+        .catch(() => {
+          bell.muted = false;
+        });
+    }
     const startedAt = Date.now();
     const durationMs = timerMinutes * 60 * 1000;
     setSession({
       startedAt,
       endsAt: startedAt + durationMs,
       color,
-      shape,
     });
+    setEndVisible(false);
     setControlsVisible(false);
-  }, [timerMinutes, color, shape, fullscreen]);
+  }, [timerMinutes, color, fullscreen]);
 
   const finishSession = useCallback(
     async (completed) => {
@@ -112,7 +130,6 @@ export default function App() {
             startedAt: session.startedAt,
             durationMs,
             color: session.color,
-            shape: session.shape,
             notes: '',
           });
         } catch {
@@ -140,7 +157,6 @@ export default function App() {
         color={color}
         brightness={brightness}
         pulse={pulse}
-        shape={shape}
         onTap={handleTapOrb}
         minSize={minOrbSize}
         maxSize={maxOrbSize}
@@ -151,6 +167,8 @@ export default function App() {
           endsAt={session.endsAt}
           onComplete={handleTimerComplete}
           onStop={handleStopSession}
+          revealed={endVisible}
+          onHide={() => setEndVisible(false)}
         />
       )}
 
@@ -164,8 +182,6 @@ export default function App() {
           setBrightness={setBrightness}
           pulse={pulse}
           setPulse={setPulse}
-          shape={shape}
-          setShape={setShape}
           timerMinutes={timerMinutes}
           setTimerMinutes={setTimerMinutes}
           onStartTimer={startTimer}

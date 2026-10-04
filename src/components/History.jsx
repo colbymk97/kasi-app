@@ -72,23 +72,7 @@ export default function History({ onClose }) {
                 <div className="flex items-center gap-3">
                   <span
                     className="inline-block w-4 h-4 rounded-full shrink-0"
-                    style={
-                      s.shape === 'ember'
-                        ? {
-                            background: `radial-gradient(circle at 50% 50%, #fff 0%, ${s.color} 55%, rgba(0,0,0,0.85) 100%)`,
-                            borderRadius: '50%',
-                          }
-                        : s.shape === 'flame'
-                        ? {
-                            background:
-                              'radial-gradient(circle at 50% 70%, #fff7d6 0%, #fbbf24 45%, #f97316 80%, #1e40af 100%)',
-                            borderRadius: '45% 45% 50% 50% / 60% 60% 40% 40%',
-                          }
-                        : {
-                            background: s.color,
-                            borderRadius: s.shape === 'square' ? '20%' : '50%',
-                          }
-                    }
+                    style={{ background: s.color }}
                     aria-hidden
                   />
                   <div className="flex-1 min-w-0">
