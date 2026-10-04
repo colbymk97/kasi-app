@@ -8,6 +8,13 @@ const IOS_HINT_KEY = 'kasi:hint:ios-install:dismissed';
 const MIN_MINUTES = 1;
 const MAX_MINUTES = 180;
 
+const SHAPE_OPTIONS = [
+  { id: 'circle', label: 'Circle' },
+  { id: 'square', label: 'Square' },
+  { id: 'flame', label: 'Flame' },
+  { id: 'ember', label: 'Ember' },
+];
+
 export default function Controls({
   visible,
   onDismiss,
@@ -17,6 +24,8 @@ export default function Controls({
   setBrightness,
   pulse,
   setPulse,
+  shape,
+  setShape,
   timerMinutes,
   setTimerMinutes,
   onStartTimer,
@@ -125,7 +134,24 @@ export default function Controls({
             />
           </div>
 
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
+              {SHAPE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setShape(opt.id)}
+                  className="text-xs uppercase tracking-widest px-3 py-2 border rounded"
+                  style={{
+                    borderColor: shape === opt.id ? '#fff' : 'rgba(255,255,255,0.15)',
+                    color: shape === opt.id ? '#fff' : 'rgba(255,255,255,0.6)',
+                  }}
+                  aria-pressed={shape === opt.id}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
             <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-white/60">
               <input
                 type="checkbox"

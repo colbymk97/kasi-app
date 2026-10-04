@@ -6,11 +6,12 @@ db.version(1).stores({
   sessions: '++id, startedAt',
 });
 
-export async function addSession({ startedAt, durationMs, color, notes }) {
+export async function addSession({ startedAt, durationMs, color, shape, notes }) {
   return db.sessions.add({
     startedAt,
     durationMs,
     color,
+    shape,
     notes: notes || '',
   });
 }

@@ -1,7 +1,19 @@
 import { useRef } from 'react';
 import { usePinchAndWheelResize } from '../hooks/usePinchAndWheelResize.js';
+import CandleFlame from './CandleFlame.jsx';
+import EmberCanvas from './EmberCanvas.jsx';
 
-export default function Orb({ size, setSize, color, brightness, pulse, onTap, minSize, maxSize }) {
+export default function Orb({
+  size,
+  setSize,
+  color,
+  brightness,
+  pulse,
+  shape,
+  onTap,
+  minSize,
+  maxSize,
+}) {
   const targetRef = useRef(null);
   const sizeRef = useRef(size);
   sizeRef.current = size;
@@ -15,6 +27,27 @@ export default function Orb({ size, setSize, color, brightness, pulse, onTap, mi
     onTap,
   });
 
+  let object;
+  if (shape === 'flame') {
+    object = <CandleFlame size={size} brightness={brightness} />;
+  } else if (shape === 'ember') {
+    object = <EmberCanvas size={size} color={color} brightness={brightness} />;
+  } else {
+    object = (
+      <div
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+          backgroundColor: color,
+          opacity: brightness,
+          borderRadius: shape === 'square' ? '12%' : '50%',
+          transition: 'border-radius 250ms ease',
+          willChange: 'transform, opacity',
+        }}
+      />
+    );
+  }
+
   return (
     <div
       ref={targetRef}
@@ -22,16 +55,7 @@ export default function Orb({ size, setSize, color, brightness, pulse, onTap, mi
       style={{ touchAction: 'none' }}
     >
       <div className={pulse ? 'kasi-pulse' : ''} style={{ willChange: 'transform' }}>
-        <div
-          style={{
-            width: `${size}px`,
-            height: `${size}px`,
-            backgroundColor: color,
-            opacity: brightness,
-            borderRadius: '50%',
-            willChange: 'transform, opacity',
-          }}
-        />
+        {object}
       </div>
     </div>
   );

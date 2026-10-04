@@ -38,19 +38,20 @@ export default function App() {
   const [color, setColor] = useState(stored?.color || DEFAULT_COLOR);
   const [brightness, setBrightness] = useState(stored?.brightness ?? 0.9);
   const [pulse, setPulse] = useState(stored?.pulse ?? false);
+  const [shape, setShape] = useState(stored?.shape || 'circle');
   const [orbSize, setOrbSize] = useState(stored?.orbSize || initialOrbSize());
   const [timerMinutes, setTimerMinutes] = useState(stored?.timerMinutes || 10);
 
   const [view, setView] = useState('meditate'); // 'meditate' | 'history'
   const [controlsVisible, setControlsVisible] = useState(false);
-  const [session, setSession] = useState(null); // { startedAt, endsAt, color }
+  const [session, setSession] = useState(null); // { startedAt, endsAt, color, shape }
   const [endVisible, setEndVisible] = useState(false);
 
   const bellRef = useRef(null);
 
   useEffect(() => {
-    savePrefs({ color, brightness, pulse, orbSize, timerMinutes });
-  }, [color, brightness, pulse, orbSize, timerMinutes]);
+    savePrefs({ color, brightness, pulse, shape, orbSize, timerMinutes });
+  }, [color, brightness, pulse, shape, orbSize, timerMinutes]);
 
   useWakeLock(!!session);
   const fullscreen = useFullscreen();
@@ -106,10 +107,11 @@ export default function App() {
       startedAt,
       endsAt: startedAt + durationMs,
       color,
+      shape,
     });
     setEndVisible(false);
     setControlsVisible(false);
-  }, [timerMinutes, color, fullscreen]);
+  }, [timerMinutes, color, shape, fullscreen]);
 
   const finishSession = useCallback(
     async (completed) => {
@@ -130,6 +132,7 @@ export default function App() {
             startedAt: session.startedAt,
             durationMs,
             color: session.color,
+            shape: session.shape,
             notes: '',
           });
         } catch {
@@ -157,6 +160,7 @@ export default function App() {
         color={color}
         brightness={brightness}
         pulse={pulse}
+        shape={shape}
         onTap={handleTapOrb}
         minSize={minOrbSize}
         maxSize={maxOrbSize}
@@ -182,6 +186,8 @@ export default function App() {
           setBrightness={setBrightness}
           pulse={pulse}
           setPulse={setPulse}
+          shape={shape}
+          setShape={setShape}
           timerMinutes={timerMinutes}
           setTimerMinutes={setTimerMinutes}
           onStartTimer={startTimer}
